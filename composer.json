@@ -1,0 +1,21 @@
+{
+    "name": "dot-env-it/laravel-calendar",
+    "description": "A high-performance FullCalendar wrapper for Laravel.",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "DotEnv\\Calendar\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "DotEnv\\Calendar\\CalendarServiceProvider"
+            ]
+        }
+    },
+    "require": {
+        "php": "^8.2",
+        "livewire/livewire": "^3.0 || ^4.0"
+    }
+}

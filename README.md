@@ -1,0 +1,150 @@
+# DotEnv Calendar for Laravel
+
+**A high-performance, reactive calendar suite for Laravel applications.**
+
+Built on the robust **FullCalendar 6** core and powered by ** Livewire ** and **Alpine.js**, this package provides a seamless bridge between your Eloquent models and a sophisticated frontend schedule. Transform any database record into a calendar event with zero boilerplate and maintain a professional, desktop-grade user experience on your Dashboard.
+
+-----
+
+## 🚀 Key Capabilities
+
+* **Eloquent-to-Calendar Mapping:** Seamlessly integrate any model using the `HasCalendarEvents` trait. You can add multiple model's events by just adding `HasCalendarEvents` trait.
+* **Livewire Reactivity:** Real-time state synchronization; your calendar reflects database changes without a single page refresh.
+* **Professional Grid Engine:** Full support for `dayGridMonth`, `timeGridWeek`, and `listWeek` layouts.
+* **Intelligent Smart Filtering:** Integrated filtering that automatically manages visibility based on your data density.
+* **Interactive Persistence:** Native drag-and-drop support for rescheduling, with automatic database persistence.
+* **Dynamic UI Orchestration:** Support for custom event prefixes, mapping of custom color attributes, and deep-linking to specific module resources.
+
+-----
+
+## 📦 Installation
+
+```bash
+composer require dot-env-it/laravel-calendar
+```
+
+-----
+
+## 🛠️ Implementation Guide
+
+### 1\. Configure Your Model
+
+Apply the trait and define the `calendar_fillable` schema. You can map `color` to a standard database column or a **custom attribute** (Accessor) for dynamic styling or `class` to add bootstrap/tailwind class.
+
+```php
+use DotEnv\Calendar\Traits\HasCalendarEvents;
+use Illuminate\Database\Eloquent\Casts\Attribute;
+
+class Task extends Model
+{
+    use HasCalendarEvents;
+
+    protected $calendar_fillable = [
+        'title'      => 'name',                    // Source column for event labels
+        'date_field' => 'next_date',             // required if `date` is custom attribute 
+        'date'       => 'due_date',                // Source column for temporal data
+        'color'      => 'event_color',             // Maps to a DB column or custom attribute
+        'class'      => 'bootstrap/tailwind classes name',  // Maps to a DB column or custom attribute
+        'route'      => 'tasks.show',              // Target named route for click actions
+        'link_id'    => 'id',                      // Optional Primary key for route resolution,(required only if primary key is not id)
+        'prefix'     => '📌 ',                     // Branding/Iconography prefix
+        'editable'   => 'can_edit'                    // You can make any record editable / draggable by adding any boolean value, i.e. create attribute which returns some boolean condition
+    ];
+
+    /**
+     * Example: Custom attribute for editable
+     */
+    protected function canEdit(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->role === 'admin',
+        );
+    }
+    
+    /**
+     * Example: Custom attribute for dynamic coloring
+     */
+    protected function eventColor(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->priority === 'high' ? '#e74c3c' : '#3498db',
+        );
+    }
+}
+```
+
+### 2\. Frontend Dependencies
+
+Ensure your application layout includes the industry-standard Select2 and FullCalendar 6 assets to power the interactive components.
+
+-----
+
+## 🖥️ Production Usage
+
+Deploy the calendar component directly into your Dashboard or any administrative view:
+
+```html
+<livewire:dot-env-calendar />
+```
+
+### Smart Filtering Logic
+
+The component features an intelligent filtering system driven by your configuration and data:
+
+* **Automatic Hiding:** The filter UI will **automatically hide** itself if only one model type is registered (preventing redundant UI elements).
+* **Global Toggle:** Enable or disable the filtering capability globally via the configuration file.
+* **Manual Override:** Force the filter state at the component level:
+  ```html
+  <livewire:dot-env-calendar :show-filter="false" />
+  ```
+
+-----
+
+## ⚙️ Global Configuration
+
+Publish and refine the `config/laravel-calendar.php` file to align the calendar with your organization’s operational settings:
+
+```php
+return [
+    'enable_filter' => true, // Global default for the Select2 filter
+    'default_time' => '10:30:00', // if database has date field then to show this time instead of 00:00:00 
+
+    /*
+    |--------------------------------------------------------------------------
+    | Dynamic Event Styling
+    |--------------------------------------------------------------------------
+    | The package automatically colors events based on their date.
+    | You can use Bootstrap/Tailwind classes or HEX codes.
+    */
+    'colors' => [
+        'past' => ['class' => 'bg-danger text-white', 'color' => '#dc3545'],
+        'today' => ['class' => 'bg-warning text-dark', 'color' => '#ffc107'],
+        'tomorrow' => ['class' => 'bg-info text-white', 'color' => '#17a2b8'],
+        'future' => ['class' => 'bg-success text-white', 'color' => '#28a745'],
+    ],
+    
+    'businessHours' => [
+        'daysOfWeek' =>, // Standard Work Week
+        'startTime' => '08:30',
+        'endTime' => '17:30',
+    ],
+    'hideWeekends' => false,
+];
+```
+
+-----
+
+## ⌨️ Developer Events
+
+Leverage custom browser events to integrate the calendar with your application's wider notification ecosystem:
+
+* **`dot-env-calendar:refreshed`**: Dispatched upon successful data synchronization.
+* **`dot-env-calendar:create-new-event`**: Dispatched upon day click
+* **`dot-env-calendar:view-event-details`**: Dispatched upon event click with eventId
+* **`dot-env-calendar:event-updated`**: Dispatched following successful database update via drag-and-drop.
+
+-----
+
+## 📄 License
+
+The MIT License (MIT). For further details, please consult the License File.
