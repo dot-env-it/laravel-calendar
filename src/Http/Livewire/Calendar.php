@@ -105,7 +105,7 @@ class Calendar extends Component
         $this->dispatch('dot-env-calendar:view-event-details', id: $id, model: $model);
     }
 
-    public function onEventDropped($eventId, $year, $month, $day, $newResourceId): void
+    public function onEventDropped($eventId, $year, $month, $day): void
     {
         [$modelName, $id] = explode('-', $eventId);
         $newDate = Carbon::create($year, $month, $day);
@@ -135,11 +135,6 @@ class Calendar extends Component
             $updateData = [
                 ($map['date'] ?? 'created_at') => $newDate->format('Y-m-d'),
             ];
-
-            // NEW: If we dropped it into a new resource column, update the grouping field
-            if ($newResourceId && isset($map['group_by'])) {
-                $updateData[$map['group_by']] = $newResourceId;
-            }
 
             $record->update($updateData);
 
