@@ -132,9 +132,9 @@ class Calendar extends Component
                 return;
             }
 
-            $updateData = [
-                ($map['date'] ?? 'created_at') => $newDate->format('Y-m-d'),
-            ];
+            $dateField = $map['date_field'] ?? $map['date'] ?? 'created_at';
+
+            $updateData[$dateField] = $newDate->format('Y-m-d');
 
             $record->update($updateData);
 
