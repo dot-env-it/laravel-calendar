@@ -6,6 +6,7 @@ Built on the robust **FullCalendar 6** core and powered by ** Livewire ** and **
 
 -----
 
+
 ## 🚀 Key Capabilities
 
 * **Eloquent-to-Calendar Mapping:** Seamlessly integrate any model using the `HasCalendarEvents` trait. You can add multiple model's events by just adding `HasCalendarEvents` trait.
@@ -86,6 +87,58 @@ Deploy the calendar component directly into your Dashboard or any administrative
 ```html
 <livewire:dot-env-calendar />
 ```
+
+-----
+
+### Conditional Filtering (Advanced)
+
+To control which records appear on the calendar (e.g., only active tasks or user-specific events), you can use two primary methods:
+
+#### A. Using Global Scopes
+
+Since the calendar fetches events via your Eloquent models, applying a [Global Scope](https://www.google.com/search?q=https://laravel.com/docs/11.x/eloquent%23global-scopes) will automatically filter the events displayed.
+
+```php
+// In your Model
+protected static function booted(): void
+{
+    static::addGlobalScope('active', function (Builder $builder) {
+        $builder->where('status', 'active');
+    });
+}
+```
+
+#### B. Using `applyCalendarFilters`
+
+For more control—or to apply filters specifically to the calendar without affecting the rest of your application—you can define an `applyCalendarFilters` method in your model. The package will automatically detect and call this method when fetching events.
+
+```php
+use Illuminate\Database\Eloquent\Builder;
+
+class Task extends Model
+{
+    use HasCalendarEvents;
+
+    /**
+     * Specifically filter records for the calendar view
+     */
+    public function applyCalendarFilters(Builder $query): Builder
+    {
+        return $query->where('user_id', auth()->id())
+                     ->whereNull('deleted_at')
+                     ->where('is_private', false);
+    }
+}
+```
+
+-----
+
+* **Scoped Queries:** Use standard Laravel Global Scopes or the dedicated `applyCalendarFilters` method to ensure users only see the data they are authorized to view.
+
+-----
+
+**Note:** Using `applyCalendarFilters` is the recommended approach if you want to display a subset of data on the calendar (like "Upcoming Deadlines") while keeping the model's default behavior untouched elsewhere in your app.
+
 
 ### Smart Filtering Logic
 
