@@ -14,7 +14,7 @@ class Calendar extends Component
     public array $events = [];
     public string $dayClickMethod = 'createNewEvent';
     public string $eventClickMethod = 'onEventClick';
-    public string $onEventDroppedMethod = 'onEventDropped';
+//    public string $onEventDroppedMethod = 'onEventDropped';
 
     public $filter = 'all'; // Default filter
 
@@ -105,57 +105,58 @@ class Calendar extends Component
         $this->dispatch('dot-env-calendar:view-event-details', id: $id, model: $model);
     }
 
-    public function onEventDropped($eventId, $year, $month, $day): void
-    {
-        [$modelName, $id] = explode('-', $eventId);
-        $newDate = Carbon::create($year, $month, $day);
-
-        $modelClass = collect(app(EventRegistry::class)->getModels())
-            ->first(fn($m) => class_basename($m) === $modelName);
-
-        if ($modelClass) {
-
-            $record = $modelClass::find($id);
-
-            $map = $record->calendar_fillable ?? [];
-
-            $canMove = true;
-
-            if (isset($map['editable'])) {
-                $canMove = is_bool($map['editable'])
-                    ? $map['editable']
-                    : (bool)$record->getAttribute($map['editable']);
-            }
-
-            if (!$canMove) {
-                $this->dispatch('swal', message: 'This item is locked!', type: 'error');
-                return;
-            }
-
-            $dateField = $map['end_date_field'] ?? $map['end_date'] ?? 'created_at';
-
-            $record->{$dateField} = $newDate->format('Y-m-d');
-
-            $record->save();
-
-            $this->loadEvents();
-
-
-            // Updated dispatch name for consistency
-            $this->dispatch('dot-env-calendar:event-updated',
-                message: __($modelName) . __(' rescheduled to ') . $newDate->format('M d, Y'),
-                type: 'success'
-            );
-        }
-    }
+//    public function onEventDropped($eventId, $year, $month, $day): void
+//    {
+//        [$modelName, $id] = explode('-', $eventId);
+//        $newDate = Carbon::create($year, $month, $day);
+//
+//        $modelClass = collect(app(EventRegistry::class)->getModels())
+//            ->first(fn($m) => class_basename($m) === $modelName);
+//
+//        if ($modelClass) {
+//
+//            $record = $modelClass::find($id);
+//
+//            $map = $record->calendar_fillable ?? [];
+//
+//            $canMove = true;
+//
+//            if (isset($map['editable'])) {
+//                $canMove = is_bool($map['editable'])
+//                    ? $map['editable']
+//                    : (bool)$record->getAttribute($map['editable']);
+//            }
+//
+//            if (!$canMove) {
+//                $this->dispatch('swal', message: 'This item is locked!', type: 'error');
+//                return;
+//            }
+//
+//            $dateField = $map['end_date_field'] ?? $map['end_date'] ?? 'created_at';
+//
+//            $record->{$dateField} = $newDate->format('Y-m-d');
+//
+//            $record->save();
+//
+//            $this->loadEvents();
+//
+//
+//            // Updated dispatch name for consistency
+//            $this->dispatch('dot-env-calendar:event-updated',
+//                message: __($modelName) . __(' rescheduled to ') . $newDate->format('M d, Y'),
+//                type: 'success'
+//            );
+//        }
+//    }
 
     // Rename to handle both drops and resizes
-    public function onEventChanged($eventId, $startYear, $startMonth, $startDay, $endYear = null, $endMonth = null, $endDay = null): void
+    public function onEventChanged($eventId, $startDate, $endDate = null): void
     {
+
         [$modelName, $id] = explode('-', $eventId);
 
-        $newStart = Carbon::create($startYear, $startMonth, $startDay);
-        $newEnd = ($endYear) ? Carbon::create($endYear, $endMonth, $endDay) : null;
+        $newStart = Carbon::parse($startDate)->timezone(config('app.timezone'));
+        $newEnd = ($endDate) ? Carbon::parse($endDate)->timezone(config('app.timezone')) : null;
 
         $modelClass = collect(app(EventRegistry::class)->getModels())
             ->first(fn($m) => class_basename($m) === $modelName);
@@ -175,11 +176,11 @@ class Calendar extends Component
                 return;
             }
 
-            // 1. Update Start Date
-            $startField = $map['start_date_field'] ?? ($map['start_date'] ?? 'created_at');
-            $record->{$startField} = $newStart->format('Y-m-d');
+            if (!$endDate || config('dot-env-calendar.ChangeStartDateOnDrop', true)) {
+                $startField = $map['start_date_field'] ?? ($map['start_date'] ?? 'created_at');
+                $record->{$startField} = $newStart->copy()->format('Y-m-d');
+            }
 
-            // 2. Update End Date (The "Extension" logic)
             $endField = $map['end_date_field'] ?? ($map['end_date'] ?? null);
             if ($endField && $newEnd) {
                 // FullCalendar's end date is exclusive (the day it stops, not the last day active)

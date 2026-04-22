@@ -81,18 +81,14 @@
                     }
                 },
 
-{{--                eventDrop: (info) => {--}}
-{{--                    const event = info.event;--}}
-{{--                    $wire.onEventChanged(--}}
-{{--                        event.id,--}}
-{{--                        event.start.getFullYear(),--}}
-{{--                        event.start.getMonth() + 1,--}}
-{{--                        event.start.getDate(),--}}
-{{--                        event.end ? event.end.getFullYear() : null,--}}
-{{--                        event.end ? event.end.getMonth() + 1 : null,--}}
-{{--                        event.end ? event.end.getDate() : null--}}
-{{--                    );--}}
-{{--                },--}}
+                eventDrop: (info) => {
+                    const event = info.event;
+                    $wire.onEventChanged(
+                        event.id,
+                        event.start,
+                        event.end ? event.end : null,
+                    );
+                },
 
                 // 2. Added eventResize to handle extending/shrinking
                 eventResize: (info) => {
@@ -100,12 +96,8 @@
                     if (event.end) {
                         $wire.onEventChanged(
                             event.id,
-                            event.start.getFullYear(),
-                            event.start.getMonth() + 1,
-                            event.start.getDate(),
-                            event.end.getFullYear(),
-                            event.end.getMonth() + 1,
-                            event.end.getDate()
+                            event.start,
+                            event.end ? event.end : null,
                         );
                     }
                 },

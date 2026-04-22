@@ -31,6 +31,8 @@ return [
     'editable' => true,
     'selectable' => false,
 
+    'ChangeStartDateOnDrop' => true, // when you don't want to change start date make it false
+
     // Add resizable option
     'eventResizableFromStart' => false,
     'eventDurationEditable' => true,

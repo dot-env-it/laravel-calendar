@@ -79,7 +79,7 @@ trait HasCalendarEvents
             'title' => $title,
             'start' => $startDate->toIso8601String(),
             'end' => $endDate ? $endDate->toIso8601String() : null, // Pass to JS
-            'allDay' => $endDate ? true : false,
+            'allDay' => true, // $endDate ? true : false,
 
             // Prioritize model-specific map, then dynamic logic
             'color' => $map['color'] ?? $style['color'],
