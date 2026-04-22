@@ -11,16 +11,29 @@
             });
 
             this.calendar = new FullCalendar.Calendar(this.$refs.canvas, {
-                initialView: 'dayGridMonth',
+                initialView: @js(config('dot-env-calendar.initialView', 'dayGridMonth')),
+                dayMaxEventRows: @js(config('dot-env-calendar.dayMaxEventRows', 5)),
 
                 // BUSINESS HOURS
                 businessHours: @js(config('dot-env-calendar.businessHours')),
-                weekends: !@js(config('dot-env-calendar.hideWeekends')),
+                weekends: !@js(config('dot-env-calendar.hideWeekends', false)),
 
                 // Smooth Loading: This ensures the calendar doesn't collapse while waiting
-                lazyFetching: true,
+                lazyFetching: @js(config('dot-env-calendar.editable', true)),
                 startParam: 'start',
                 endParam: 'end',
+
+                headerToolbar: @js(config('dot-env-calendar.headerToolbar', [
+                    'left' => 'prev,next today',
+                    'center' => 'title',
+                    'right' => 'dayGridMonth,timeGridWeek,listWeek',
+                ])),
+
+                editable: @js(config('dot-env-calendar.editable', true)),
+                selectable: @js(config('dot-env-calendar.selectable', true)),
+
+                eventResizableFromStart: @js(config('dot-env-calendar.eventResizableFromStart', false)),
+                eventDurationEditable: @js(config('dot-env-calendar.eventDurationEditable', true)),
 
                 events: (info, successCallback, failureCallback) => {
                     // Use $wire to get data, then pass it to the callback
@@ -34,15 +47,6 @@
                             failureCallback(error);
                         });
                 },
-                headerToolbar: {
-                    left: 'prev,next today',
-                    center: 'title',
-                    right: 'dayGridMonth,timeGridWeek,listWeek'
-                },
-                editable: true,
-                selectable: true,
-
-
                 eventDidMount: function(info) {
                     if (info.event.extendedProps.isLocked) {
                         info.el.style.opacity = '0.6';
@@ -50,6 +54,16 @@
                         const title = info.el.querySelector('.fc-event-title');
                         if (title) title.prepend('🔒 ');
                     }
+
+                    tippy(info.el, {
+                        content: info.event.extendedProps.description || info.event.title,
+                        allowHTML: true,
+                        placement: 'top',
+                        theme: 'light',                                // Optional: adjust to your UI
+                        interactive: true,
+                        theme: 'light-border', // Example theme
+                        animation: 'shift-toward',
+                    });
                 },
 
                 dateClick: (info) => {
@@ -67,15 +81,33 @@
                     }
                 },
 
-                eventDrop: (info) => {
-                    const eventId = info.event.id;
-                    const newDate = info.event.start;
-                    $wire.onEventDropped(
-                        eventId,
-                        newDate.getFullYear(),
-                        newDate.getMonth() + 1,
-                        newDate.getDate()
-                    );
+{{--                eventDrop: (info) => {--}}
+{{--                    const event = info.event;--}}
+{{--                    $wire.onEventChanged(--}}
+{{--                        event.id,--}}
+{{--                        event.start.getFullYear(),--}}
+{{--                        event.start.getMonth() + 1,--}}
+{{--                        event.start.getDate(),--}}
+{{--                        event.end ? event.end.getFullYear() : null,--}}
+{{--                        event.end ? event.end.getMonth() + 1 : null,--}}
+{{--                        event.end ? event.end.getDate() : null--}}
+{{--                    );--}}
+{{--                },--}}
+
+                // 2. Added eventResize to handle extending/shrinking
+                eventResize: (info) => {
+                    const event = info.event;
+                    if (event.end) {
+                        $wire.onEventChanged(
+                            event.id,
+                            event.start.getFullYear(),
+                            event.start.getMonth() + 1,
+                            event.start.getDate(),
+                            event.end.getFullYear(),
+                            event.end.getMonth() + 1,
+                            event.end.getDate()
+                        );
+                    }
                 },
             });
 
@@ -103,7 +135,7 @@
                         @foreach(app(\DotEnv\Calendar\EventRegistry::class)->getModels() as $model)
                             @php $typeName = strtolower(class_basename($model)); @endphp
                             <option
-                                value="{{ $typeName }}" {{ $filter === $typeName ? 'selected' : '' }}>@lang(str($typeName)->title()->plural()->toString())</option>
+                                    value="{{ $typeName }}" {{ $filter === $typeName ? 'selected' : '' }}>@lang(str($typeName)->title()->plural()->toString())</option>
                         @endforeach
                     </select>
                 </div>

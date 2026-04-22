@@ -3,6 +3,8 @@
 return [
     'default_time' => '10:30:00',
 
+    'initialView' => 'dayGridMonth',
+
     /*
     |--------------------------------------------------------------------------
     | Dynamic Event Styling
@@ -22,6 +24,22 @@ return [
         'endTime' => '18:00',
     ],
     'hideWeekends' => false, // Toggle this if the lawyer wants a 5-day view
+
+    'dayMaxEventRows' => 4,
+    'lazyFetching' => true,
+
+    'editable' => true,
+    'selectable' => false,
+
+    // Add resizable option
+    'eventResizableFromStart' => false,
+    'eventDurationEditable' => true,
+
+    'headerToolbar' => [
+        'left' => 'prev,next today',
+        'center' => 'title',
+        'right' => 'dayGridMonth,timeGridWeek,listWeek',
+    ],
 
     'enable_filter' => true, // Enable filter when multiple model's events are displayed.
 ];
