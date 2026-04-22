@@ -17,7 +17,7 @@ Built on the robust **FullCalendar 6** core and powered by ** Livewire ** and **
 * **Dynamic UI Orchestration:** Support for custom event prefixes, mapping of custom color attributes, and deep-linking to specific module resources.
 
 -----
-## Become a sponsor [![](https://img.shields.io/static/v1?label=Sponsor&message=%E2%9D%A4&logo=GitHub&color=%23fe8e86)](https://github.com/sponsors/dot-env-it)
+## Become a sponsor [![](https://img.shields.io/static/v1?label=Sponsor&message=%E2%9D%A4&logo=GitHub&color=%23fe8e86)](https://github.com/sponsors/jagdish-j-p)
 
 Your support allows me to keep this package free, up-to-date and maintainable. Alternatively, you can **[spread the word!](http://twitter.com/share?text=I+am+using+this+cool+Laravel+Calendar+package&url=https://github.com/dot-env-it/laravel-calendar&hashtags=Calendar,PHP,Laravel)**
 
