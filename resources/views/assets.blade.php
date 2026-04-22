@@ -2,10 +2,10 @@
 <script src="https://unpkg.com/@popperjs/core@2"></script>
 <script src="https://unpkg.com/tippy.js@6"></script>
 <style>
-    .dot-env-calendar-container {
-        min-height: 600px;
-        transition: none !important;
-    }
+    /*.dot-env-calendar-container {*/
+    /*    min-height: 600px;*/
+    /*    transition: none !important;*/
+    /*}*/
 
     .fc-event {
         cursor: pointer;
@@ -17,22 +17,17 @@
         transform: scale(1.02);
     }
 
-    .dot-env-calendar .fc-toolbar-title {
-        font-size: 1.1rem !important;
-        color: #e2e8f0;
-    }
-
 
     /* Hide the 'vibrating' loading text and use a clean overlay if needed */
-    .fc-view-harness {
-        background-color: transparent;
-    }
+    /*.fc-view-harness {*/
+    /*    background-color: transparent;*/
+    /*}*/
 
-    /* Ensure the Select2 doesn't jump the header */
-    .select2-container--default .select2-selection--single {
-        height: 38px !important;
-        display: flex;
-        align-items: center;
-    }
+    /*!* Ensure the Select2 doesn't jump the header *!*/
+    /*.select2-container--default .select2-selection--single {*/
+    /*    height: 38px !important;*/
+    /*    display: flex;*/
+    /*    align-items: center;*/
+    /*}*/
 </style>
 
