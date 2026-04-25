@@ -3,6 +3,7 @@
 namespace DotEnv\Calendar\Traits;
 
 use Carbon\Carbon;
+use DotEnv\Calendar\EventRegistry;
 use Illuminate\Database\Eloquent\Builder;
 use Route;
 
@@ -10,7 +11,7 @@ trait HasCalendarEvents
 {
     public static function bootHasCalendarEvents(): void
     {
-        app(\DotEnv\Calendar\EventRegistry::class)->register([static::class]);
+        app(EventRegistry::class)->register([static::class]);
     }
 
     public function toCalendarEvent(): array
@@ -26,7 +27,7 @@ trait HasCalendarEvents
         // Auto-Time Logic for Start Date
         if ($startDate instanceof Carbon && $startDate->format('H:i:s') === '00:00:00') {
             $time = config('dot-env-calendar.default_time', '10:30:00');
-            [$hours, $minutes, $seconds] = explode(':', $time . ':00');
+            [$hours, $minutes, $seconds] = explode(':', $time.':00');
             $startDate = $startDate->copy()->setTime($hours, $minutes, $seconds);
         }
 
@@ -39,7 +40,7 @@ trait HasCalendarEvents
 
                 // FullCalendar Fix: If end date has no time, it is exclusive.
                 // We add 1 day so the event spans the full duration on the UI.
-                if (!$endDate->isYesterday() && $endDate->format('H:i:s') === '00:00:00') {
+                if (! $endDate->isYesterday() && $endDate->format('H:i:s') === '00:00:00') {
                     $endDate = $endDate->copy()->addDay();
                 }
             }
@@ -53,7 +54,7 @@ trait HasCalendarEvents
         if (isset($map['editable'])) {
             $editableField = $map['editable'];
             // If it's a boolean, use it. If it's a string, check that attribute.
-            $isEditable = is_bool($editableField) ? $editableField : (bool)$this->getAttribute($editableField);
+            $isEditable = is_bool($editableField) ? $editableField : (bool) $this->getAttribute($editableField);
         }
 
         // 1. Determine the ID to use for the URL
@@ -62,7 +63,6 @@ trait HasCalendarEvents
             ? $this->getAttribute($map['link_id'])
             : $this->getKey();
 
-
         // 3. Generate URL with the parent ID and any extra query params
         $params = $map['route_params'] ?? [];
 
@@ -70,12 +70,12 @@ trait HasCalendarEvents
             ? route($map['route'], array_merge([$urlId], $params))
             : null;
 
-        $title = ($map['prefix'] ?? '') . $this->getAttribute($map['title'] ?? 'title');
+        $title = ($map['prefix'] ?? '').$this->getAttribute($map['title'] ?? 'title');
         $description = $this->getAttribute($map['description'] ?? 'description') ?? $title;
 
         return [
             // Inside toCalendarEvent() in HasCalendarEvents.php
-            'id' => class_basename($this) . '-' . $this->getKey(),
+            'id' => class_basename($this).'-'.$this->getKey(),
             'title' => $title,
             'start' => $startDate->toIso8601String(),
             'end' => $endDate ? $endDate->toIso8601String() : null, // Pass to JS
@@ -91,7 +91,7 @@ trait HasCalendarEvents
 
             'extendedProps' => [
                 'source' => strtolower(class_basename($this)),
-                'isLocked' => !$isEditable,
+                'isLocked' => ! $isEditable,
                 'description' => $description,
             ],
         ];
@@ -103,7 +103,7 @@ trait HasCalendarEvents
         $colors = config('dot-env-calendar.colors');
 
         // Logic to determine the "key" based on time
-        if ($eventDate->isPast() && !$eventDate->isToday()) {
+        if ($eventDate->isPast() && ! $eventDate->isToday()) {
             $status = 'past';
         } elseif ($eventDate->isToday()) {
             $status = 'today';

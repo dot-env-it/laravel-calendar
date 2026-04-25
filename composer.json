@@ -17,5 +17,16 @@
     "require": {
         "php": "^8.2",
         "livewire/livewire": "^3.0 || ^4.0"
+    },
+    "require-dev": {
+        "dragon-code/codestyler": "^6.7"
+    },
+    "config": {
+        "allow-plugins": {
+            "ergebnis/composer-normalize": true
+        }
+    },
+    "scripts": {
+        "style": "vendor/bin/rector && vendor/bin/pint --parallel"
     }
 }
