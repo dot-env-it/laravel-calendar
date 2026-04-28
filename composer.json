@@ -1,32 +1,42 @@
 {
-    "name": "dot-env-it/laravel-calendar",
-    "description": "A high-performance FullCalendar wrapper for Laravel.",
-    "license": "MIT",
-    "autoload": {
-        "psr-4": {
-            "DotEnv\\Calendar\\": "src/"
-        }
+  "name": "dot-env-it/laravel-calendar",
+  "description": "A high-performance FullCalendar wrapper for Laravel.",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Dot-Env-IT",
+      "email": "dotenvit@gmail.com"
     },
-    "extra": {
-        "laravel": {
-            "providers": [
-                "DotEnv\\Calendar\\CalendarServiceProvider"
-            ]
-        }
-    },
-    "require": {
-        "php": "^8.2",
-        "livewire/livewire": "^3.0 || ^4.0"
-    },
-    "require-dev": {
-        "dragon-code/codestyler": "^6.7"
-    },
-    "config": {
-        "allow-plugins": {
-            "ergebnis/composer-normalize": true
-        }
-    },
-    "scripts": {
-        "style": "vendor/bin/rector && vendor/bin/pint --parallel"
+    {
+      "name": "Jagdish Patel",
+      "email": "jagdish.j.ptl@gmail.com.com"
     }
+  ],
+  "autoload": {
+    "psr-4": {
+      "DotEnv\\Calendar\\": "src/"
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "DotEnv\\Calendar\\CalendarServiceProvider"
+      ]
+    }
+  },
+  "require": {
+    "php": "^8.2",
+    "livewire/livewire": "^3.0 || ^4.0"
+  },
+  "require-dev": {
+    "dragon-code/codestyler": "^6.7"
+  },
+  "config": {
+    "allow-plugins": {
+      "ergebnis/composer-normalize": true
+    }
+  },
+  "scripts": {
+    "style": "vendor/bin/rector && vendor/bin/pint --parallel"
+  }
 }
