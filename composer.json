@@ -12,18 +12,6 @@
       "email": "jagdish.j.ptl@gmail.com.com"
     }
   ],
-  "autoload": {
-    "psr-4": {
-      "DotEnv\\Calendar\\": "src/"
-    }
-  },
-  "extra": {
-    "laravel": {
-      "providers": [
-        "DotEnv\\Calendar\\CalendarServiceProvider"
-      ]
-    }
-  },
   "require": {
     "php": "^8.2",
     "livewire/livewire": "^3.0 || ^4.0"
@@ -31,9 +19,22 @@
   "require-dev": {
     "dragon-code/codestyler": "^6.7"
   },
+  "autoload": {
+    "psr-4": {
+      "DotEnv\\Calendar\\": "src/"
+    }
+  },
   "config": {
     "allow-plugins": {
-      "ergebnis/composer-normalize": true
+      "ergebnis/composer-normalize": true,
+      "laravel/pint": true
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "DotEnv\\Calendar\\CalendarServiceProvider"
+      ]
     }
   },
   "scripts": {
