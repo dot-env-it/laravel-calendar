@@ -1,5 +1,9 @@
 # DotEnv Calendar for Laravel
 
+[![Latest Stable Version](https://img.shields.io/packagist/v/dot-env-it/laravel-calendar.svg?style=flat-square)](https://packagist.org/packages/dot-env-it/laravel-calendar)
+[![Total Downloads](https://img.shields.io/packagist/dt/dot-env-it/laravel-calendar.svg?style=flat-square)](https://packagist.org/packages/dot-env-it/laravel-calendar)
+[![License](https://img.shields.io/packagist/l/dot-env-it/laravel-calendar.svg?style=flat-square)](https://packagist.org/packages/dot-env-it/laravel-calendar)
+
 **A high-performance, reactive calendar suite for Laravel applications.**
 
 Built on the robust **FullCalendar 6** core and powered by ** Livewire ** and **Alpine.js**, this package provides a seamless bridge between your Eloquent models and a sophisticated frontend schedule. Transform any database record into a calendar event with zero boilerplate and maintain a professional, desktop-grade user experience on your Dashboard.
