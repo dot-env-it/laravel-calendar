@@ -84,7 +84,7 @@ trait HasCalendarEvents
             'allDay' => true, // $endDate ? true : false,
 
             // Prioritize model-specific map, then dynamic logic
-            'color'            => $map['color']     ?? $style['color'],
+            'color'            => $map['color'] ?? $style['color'],
             'className'        => $map['class'] ?? $style['class'],
             'editable'         => $isEditable,
             'startEditable'    => $isEditable,
