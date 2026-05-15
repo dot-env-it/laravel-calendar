@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace DotEnv\Calendar\Http\Livewire;
 
 use Carbon\Carbon;
@@ -9,7 +11,7 @@ use Illuminate\Contracts\View\View;
 use Livewire\Attributes\On;
 use Livewire\Component;
 
-class Calendar extends Component
+final class Calendar extends Component
 {
     public array $events = [];
 
@@ -32,9 +34,7 @@ class Calendar extends Component
         $this->loadEvents();
     }
 
-    /**
-     * Determine if the UI should actually render the filter dropdown.
-     */
+    /** Determine if the UI should actually render the filter dropdown. */
     public function shouldRenderFilter(): bool
     {
         if (! $this->showFilter) {
@@ -65,7 +65,7 @@ class Calendar extends Component
 
         // Parse dates or default to the current year
         $startDate = $start ? Carbon::parse($start) : now()->startOfYear();
-        $endDate = $end ? Carbon::parse($end) : now()->endOfYear();
+        $endDate   = $end ? Carbon::parse($end) : now()->endOfYear();
 
         $this->events = collect(app(EventRegistry::class)->getModels())
             ->filter(function ($modelClass) {
@@ -161,14 +161,14 @@ class Calendar extends Component
         [$modelName, $id] = explode('-', $eventId);
 
         $newStart = Carbon::parse($startDate)->timezone(config('app.timezone'));
-        $newEnd = ($endDate) ? Carbon::parse($endDate)->timezone(config('app.timezone')) : null;
+        $newEnd   = ($endDate) ? Carbon::parse($endDate)->timezone(config('app.timezone')) : null;
 
         $modelClass = collect(app(EventRegistry::class)->getModels())
             ->first(fn ($m) => class_basename($m) === $modelName);
 
         if ($modelClass) {
             $record = $modelClass::find($id);
-            $map = $record->calendar_fillable ?? [];
+            $map    = $record->calendar_fillable ?? [];
 
             // Permission check
             $canEdit = true;
@@ -183,7 +183,7 @@ class Calendar extends Component
             }
 
             if (! $endDate || config('dot-env-calendar.ChangeStartDateOnDrop', true)) {
-                $startField = $map['start_date_field'] ?? ($map['start_date'] ?? 'created_at');
+                $startField            = $map['start_date_field'] ?? ($map['start_date'] ?? 'created_at');
                 $record->{$startField} = $newStart->copy()->format('Y-m-d');
             }
 
@@ -197,8 +197,9 @@ class Calendar extends Component
             $record->save();
             $this->loadEvents();
 
-            $this->dispatch('dot-env-calendar:event-updated',
-                message: __($modelName).__(' updated successfully.'),
+            $this->dispatch(
+                'dot-env-calendar:event-updated',
+                message: __($modelName) . __(' updated successfully.'),
                 type: 'success'
             );
         }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace DotEnv\Calendar\Traits;
 
 use Carbon\Carbon;
@@ -22,13 +24,13 @@ trait HasCalendarEvents
         // 1. Handle Start Date
         $startField = $map['start_date'] ?? 'created_at'; // Changed from 'date'
         $startValue = $this->getAttribute($startField);
-        $startDate = $startValue instanceof Carbon ? $startValue : Carbon::parse($startValue);
+        $startDate  = $startValue instanceof Carbon ? $startValue : Carbon::parse($startValue);
 
         // Auto-Time Logic for Start Date
         if ($startDate instanceof Carbon && $startDate->format('H:i:s') === '00:00:00') {
-            $time = config('dot-env-calendar.default_time', '10:30:00');
-            [$hours, $minutes, $seconds] = explode(':', $time.':00');
-            $startDate = $startDate->copy()->setTime($hours, $minutes, $seconds);
+            $time                        = config('dot-env-calendar.default_time', '10:30:00');
+            [$hours, $minutes, $seconds] = explode(':', $time . ':00');
+            $startDate                   = $startDate->copy()->setTime($hours, $minutes, $seconds);
         }
 
         // 2. Handle End Date Logic
@@ -70,28 +72,28 @@ trait HasCalendarEvents
             ? route($map['route'], array_merge([$urlId], $params))
             : null;
 
-        $title = ($map['prefix'] ?? '').$this->getAttribute($map['title'] ?? 'title');
+        $title       = ($map['prefix'] ?? '') . $this->getAttribute($map['title'] ?? 'title');
         $description = $this->getAttribute($map['description'] ?? 'description') ?? $title;
 
         return [
             // Inside toCalendarEvent() in HasCalendarEvents.php
-            'id' => class_basename($this).'-'.$this->getKey(),
-            'title' => $title,
-            'start' => $startDate->toIso8601String(),
-            'end' => $endDate ? $endDate->toIso8601String() : null, // Pass to JS
+            'id'     => class_basename($this) . '-' . $this->getKey(),
+            'title'  => $title,
+            'start'  => $startDate->toIso8601String(),
+            'end'    => $endDate ? $endDate->toIso8601String() : null, // Pass to JS
             'allDay' => true, // $endDate ? true : false,
 
             // Prioritize model-specific map, then dynamic logic
-            'color' => $map['color'] ?? $style['color'],
-            'className' => $map['class'] ?? $style['class'],
-            'editable' => $isEditable,
-            'startEditable' => $isEditable,
+            'color'            => $map['color'] ?? $style['color'],
+            'className'        => $map['class'] ?? $style['class'],
+            'editable'         => $isEditable,
+            'startEditable'    => $isEditable,
             'durationEditable' => $isEditable,
-            'url' => $url,
+            'url'              => $url,
 
             'extendedProps' => [
-                'source' => strtolower(class_basename($this)),
-                'isLocked' => ! $isEditable,
+                'source'      => strtolower(class_basename($this)),
+                'isLocked'    => ! $isEditable,
                 'description' => $description,
             ],
         ];
@@ -100,7 +102,7 @@ trait HasCalendarEvents
     protected function getDynamicCalendarStyle(Carbon $date, array $map): array
     {
         $eventDate = $date->copy()->startOfDay();
-        $colors = config('dot-env-calendar.colors');
+        $colors    = config('dot-env-calendar.colors');
 
         // Logic to determine the "key" based on time
         if ($eventDate->isPast() && ! $eventDate->isToday()) {
@@ -120,16 +122,14 @@ trait HasCalendarEvents
         ];
     }
 
-    /**
-     * Get the query to fetch events with automated security filtering.
-     */
+    /** Get the query to fetch events with automated security filtering. */
     public static function getCalendarQuery($startDate, $endDate): Builder
     {
         $map = (new static)->calendar_fillable ?? [];
 
         // Updated parameter names
         $startColumn = $map['start_date_field'] ?? ($map['start_date'] ?? 'created_at');
-        $endColumn = $map['end_date_field'] ?? ($map['end_date'] ?? null);
+        $endColumn   = $map['end_date_field']   ?? ($map['end_date'] ?? null);
 
         $query = static::query();
 
