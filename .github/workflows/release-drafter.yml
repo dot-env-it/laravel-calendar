@@ -1,0 +1,24 @@
+name: Release Drafter
+
+on:
+ push:
+  # Branches that trigger the draft generation when code is pushed
+  branches:
+   - main
+   - master
+
+permissions:
+ contents: write
+ pull-requests: read
+
+jobs:
+ update_release_draft:
+  permissions:
+   contents: write  # Allows the action to create/edit draft releases
+   pull-requests: read  # Allows the action to read pull request details
+  runs-on: ubuntu-latest
+  steps:
+   - name: Run Release Drafter
+     uses: release-drafter/release-drafter@v6
+     env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

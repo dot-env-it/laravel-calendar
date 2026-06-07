@@ -17,6 +17,9 @@
         transform: scale(1.02);
     }
 
+    .fc-timegrid-event-harness {
+        min-height: 30px;
+    }
 
     /* Hide the 'vibrating' loading text and use a clean overlay if needed */
     /*.fc-view-harness {*/

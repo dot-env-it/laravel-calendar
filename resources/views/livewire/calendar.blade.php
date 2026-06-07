@@ -1,5 +1,5 @@
 <div
-    x-data="{
+        x-data="{
         calendar: null,
         init() {
             $(this.$refs.filterSelect).select2({
@@ -17,6 +17,78 @@
                 // BUSINESS HOURS
                 businessHours: @js(config('dot-env-calendar.businessHours')),
                 weekends: !@js(config('dot-env-calendar.hideWeekends', false)),
+
+                // Force both start and end times to display on the event blocks
+                displayEventTime: false,
+
+                eventContent: function(arg) {
+                    let titleText = arg.event.title;
+                    let startTimeText = '';
+                    let endTimeText = '';
+
+                    // Check if an end time exists for the event
+                    if (@js(config('dot-env-calendar.displayEventTime', false)) ) {
+                        if (@js(config('dot-env-calendar.displayEventStart', false)) && arg.event.start) {
+                            startTimeText = arg.event.start.toLocaleTimeString([], {
+                                hour: @js(config('dot-env-calendar.eventTimeFormat.hour', 'numeric')),
+                                minute: @js(config('dot-env-calendar.eventTimeFormat.minute', '2-digit')),
+                                hour12: @js(config('dot-env-calendar.eventTimeFormat.hour12', true))
+                            }).toLowerCase().replace(' ', '');
+                        }
+
+                        if (@js(config('dot-env-calendar.displayEventEnd', false)) && arg.event.end) {
+                            endTimeText = arg.event.end.toLocaleTimeString([], {
+                                hour: @js(config('dot-env-calendar.eventTimeFormat.hour', 'numeric')),
+                                minute: @js(config('dot-env-calendar.eventTimeFormat.minute', '2-digit')),
+                                hour12: @js(config('dot-env-calendar.eventTimeFormat.hour12', true))
+                            }).toLowerCase().replace(' ', '');
+                        }
+                    }
+
+                    // Create the custom DOM layout
+                    let customEl = document.createElement('div');
+                    customEl.className = 'fc-event-main-frame';
+
+                    let timeText = '';
+                    if (startTimeText && endTimeText) {
+                        timeText = `${startTimeText} - ${endTimeText}`;
+                    } else if (startTimeText) {
+                        timeText = startTimeText;
+                    } else if (endTimeText) {
+                        timeText = endTimeText;
+                    }
+
+                    // Render just the end time and the title
+                    customEl.innerHTML = `
+                        <div class='fc-event-time'>${timeText}</div>
+                        <div class='fc-event-title-container'>
+                            <div class='fc-event-title fc-sticky'>${titleText}</div>
+                        </div>
+                    `;
+
+                    return { domNodes: [customEl] };
+                },
+
+                slotLabelFormat: {
+                  hour: '2-digit',
+                  minute: '2-digit',
+                  hour12: true
+                },
+
+                eventTimeFormat: {
+                    hour: 'numeric',
+                    minute: '2-digit',
+                    meridiem: 'short',
+                    omitZeroMinute: true
+                },
+
+                // Enable the live current time indicator line
+                nowIndicator: @js(config('dot-env-calendar.show_now_indicator', true)),
+
+                // Automatically focuses the viewport window layout directly onto the current hour axis
+                scrollTime: @js(config('dot-env-calendar.auto_scroll_to_now', true))
+                    ? new Date().toTimeString().split(' ')[0]
+                    : '10:00:00',
 
                 // Smooth Loading: This ensures the calendar doesn't collapse while waiting
                 lazyFetching: @js(config('dot-env-calendar.editable', true)),
@@ -39,8 +111,42 @@
                     // Use $wire to get data, then pass it to the callback
                     $wire.loadEvents(info.startStr, info.endStr)
                         .then(events => {
+
                             // successCallback handles the transition smoothly
                             successCallback(events);
+
+                            // Check if the developer enabled smart view switching in config
+                            const enableSwitch = @js(config('dot-env-calendar.switch_view_if_event_today', false));
+
+                            if (enableSwitch && Array.isArray(events)) {
+                                // 1. Get today's local date string (YYYY-MM-DD)
+                                const todayStr = new Date().toISOString().split('T')[0];
+
+                                // 2. See if any loaded events land on today
+                                const hasEventToday = events.some(event => {
+                                    if (event && event.start) {
+                                        const eventDate = event.start.split('T')[0];
+                                        return eventDate === todayStr;
+                                    }
+                                    return false;
+                                });
+
+                                let targetView = @js(config('dot-env-calendar.initialView', 'dayGridMonth'));
+
+                                // 3. Switch view safely using FullCalendar's internal api reference context
+                                if (hasEventToday) {
+                                    targetView = @js(config('dot-env-calendar.today_event_view', 'timeGridDay'));
+                                }
+
+                                // Use FullCalendar's internal execution context if 'this.calendar' isn't mutated yet
+                                if (this.calendar) {
+                                    this.calendar.changeView(targetView);
+                                } else {
+                                    // Fallback override for the initial view render array configuration
+                                    info.view.calendar.changeView(targetView);
+                                }
+                            }
+
                         })
                         .catch(error => {
                             console.error('Calendar Load Error:', error);
@@ -75,7 +181,7 @@
                     info.jsEvent.preventDefault();
 
                     if (info.event.url && info.event.url !== '' && info.event.url !== 'null') {
-                        window.open(info.event.url, '_blank');
+                        window.open(info.event.url, info.event.extendedProps._target);
                     } else {
                         $wire.onEventClick(info.event.id);
                     }
@@ -115,7 +221,7 @@
             });
         }
     }"
-    wire:ignore
+        wire:ignore
 >
     @if($this->shouldRenderFilter())
         <div class="flex items-center justify-between mb-6 text-end">
