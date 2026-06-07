@@ -1,11 +1,10 @@
 name: Release Drafter
 
 on:
- push:
-  # Branches that trigger the draft generation when code is pushed
-  branches:
-   - main
-   - master
+ workflow_run:
+  workflows: ["Code Style"] # Must match the exact 'name:' of your code style workflow
+  types:
+   - completed
 
 permissions:
  contents: write
@@ -13,9 +12,12 @@ permissions:
 
 jobs:
  update_release_draft:
+  # Crucial safety check: Only run if the Code Style workflow actually succeeded
+  if: ${{ github.event.workflow_run.conclusion == 'success' }}
+
   permissions:
-   contents: write  # Allows the action to create/edit draft releases
-   pull-requests: read  # Allows the action to read pull request details
+   contents: write
+   pull-requests: read
   runs-on: ubuntu-latest
   steps:
    - name: Run Release Drafter
