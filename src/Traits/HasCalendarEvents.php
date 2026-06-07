@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace DotEnv\Calendar\Traits;
 
 use Carbon\Carbon;
+use DotEnv\Calendar\EventRegistry;
 use Illuminate\Database\Eloquent\Builder;
 use Route;
 
@@ -12,7 +13,7 @@ trait HasCalendarEvents
 {
     public static function bootHasCalendarEvents(): void
     {
-        app(\DotEnv\Calendar\EventRegistry::class)->register([static::class]);
+        app(EventRegistry::class)->register([static::class]);
     }
 
     public function toCalendarEvent(): array
@@ -29,7 +30,7 @@ trait HasCalendarEvents
         if ($startDate instanceof Carbon && $startDate->format('H:i:s') === '00:00:00') {
             $time                        = config('dot-env-calendar.default_time', '10:30:00');
             [$hours, $minutes, $seconds] = explode(':', $time . ':00');
-            $startDate                   = $startDate->copy()->setTime($hours, $minutes, $seconds);
+            $startDate                   = $startDate->copy()->setTime((int)$hours, (int)$minutes, (int)$seconds);
         }
 
         // 2. Handle End Date Logic
