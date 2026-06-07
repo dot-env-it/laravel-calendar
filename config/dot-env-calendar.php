@@ -17,7 +17,7 @@ return [
     |
     */
     'switch_view_if_event_today' => true,
-    'today_event_view' => 'timeGridDay', // The view to open when events exist today
+    'today_event_view'           => 'timeGridDay', // The view to open when events exist today
 
     // Shows a live marker indicating the current time on time-grid layouts
     'show_now_indicator' => true,
@@ -62,9 +62,9 @@ return [
     | and end time for events.
     */
 
-    'displayEventTime' => true,
+    'displayEventTime'  => true,
     'displayEventStart' => false,
-    'displayEventEnd' => true,
+    'displayEventEnd'   => true,
 
     /*
     |--------------------------------------------------------------------------
@@ -75,7 +75,7 @@ return [
     */
 
     'eventTimeFormat' => [
-        'hour' => 'numeric',
+        'hour'   => 'numeric',
         'minute' => '2-digit',
         'hour12' => true,
     ],
@@ -122,7 +122,6 @@ return [
     */
 
     'enable_filter' => true,
-
 
     /*
     |--------------------------------------------------------------------------

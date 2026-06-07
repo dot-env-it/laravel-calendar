@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace DotEnv\Calendar\Traits;
 
 use Carbon\Carbon;
@@ -25,9 +27,9 @@ trait HasCalendarEvents
 
         // Auto-Time Logic for Start Date
         if ($startDate instanceof Carbon && $startDate->format('H:i:s') === '00:00:00') {
-            $time = config('dot-env-calendar.default_time', '10:30:00');
+            $time                        = config('dot-env-calendar.default_time', '10:30:00');
             [$hours, $minutes, $seconds] = explode(':', $time . ':00');
-            $startDate = $startDate->copy()->setTime($hours, $minutes, $seconds);
+            $startDate                   = $startDate->copy()->setTime($hours, $minutes, $seconds);
         }
 
         // 2. Handle End Date Logic
@@ -74,10 +76,9 @@ trait HasCalendarEvents
 
         $allDay = true;
 
-        if(isset($map['all_day'])) {
+        if (isset($map['all_day'])) {
             $allDay = (bool) $map['all_day'];
-        }
-        else if(config('dot-env-calendar.all_day', true)) {
+        } elseif (config('dot-env-calendar.all_day', true)) {
             // If the event has no time component, treat it as all-day
             $allDay = $startDate->format('H:i:s') === '00:00:00'
                 && (! $endDate || $endDate->format('H:i:s') === '00:00:00');
@@ -85,11 +86,11 @@ trait HasCalendarEvents
 
         return [
             // Inside toCalendarEvent() in HasCalendarEvents.php
-            'id'               => class_basename($this) . '-' . $this->getKey(),
-            'title'            => $title,
-            'start'            => $startDate->toIso8601String(),
-            'end'              => $endDate ? $endDate->toIso8601String() : null, // Pass to JS
-            'allDay'           => $allDay, // $endDate ? true : false,
+            'id'     => class_basename($this) . '-' . $this->getKey(),
+            'title'  => $title,
+            'start'  => $startDate->toIso8601String(),
+            'end'    => $endDate ? $endDate->toIso8601String() : null, // Pass to JS
+            'allDay' => $allDay, // $endDate ? true : false,
 
             // Prioritize model-specific map, then dynamic logic
             'color'            => $map['color'] ?? $style['color'],
@@ -131,16 +132,14 @@ trait HasCalendarEvents
         ];
     }
 
-    /**
-     * Get the query to fetch events with automated security filtering.
-     */
+    /** Get the query to fetch events with automated security filtering. */
     public static function getCalendarQuery($startDate, $endDate): Builder
     {
         $map = (new static)->calendar_fillable ?? [];
 
         // Updated parameter names
         $startColumn = $map['start_date_field'] ?? ($map['start_date'] ?? 'created_at');
-        $endColumn   = $map['end_date_field'] ?? ($map['end_date'] ?? null);
+        $endColumn   = $map['end_date_field']   ?? ($map['end_date'] ?? null);
 
         $query = static::query();
 
