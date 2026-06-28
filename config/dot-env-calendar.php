@@ -143,7 +143,7 @@ return [
     |--------------------------------------------------------------------------
     |
     */
-    'moreLinkText' => ':num events',
+    'moreLinkText'  => ':num events',
     'moreLinkClick' => 'popover', // available options: popover or event
 
 ];
