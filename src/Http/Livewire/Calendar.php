@@ -102,6 +102,15 @@ class Calendar extends Component
         $this->dispatch('dot-env-calendar:create-new-event', date: $date);
     }
 
+    public function moreLinkClickEvent($year, $month, $day)
+    {
+        $date = Carbon::create($year, $month, $day)->format('Y-m-d');
+
+        info('envent clicked to more link');
+        // Updated dispatch name
+        $this->dispatch('dot-env-calendar:more-link-clicked-event', date: $date);
+    }
+
     public function onEventClick($eventId): void
     {
         [$model, $id] = explode('-', $eventId);
@@ -109,50 +118,6 @@ class Calendar extends Component
         // The $eventId comes from the 'id' key in your toCalendarEvent map
         $this->dispatch('dot-env-calendar:view-event-details', id: $id, model: $model);
     }
-
-    //    public function onEventDropped($eventId, $year, $month, $day): void
-    //    {
-    //        [$modelName, $id] = explode('-', $eventId);
-    //        $newDate = Carbon::create($year, $month, $day);
-    //
-    //        $modelClass = collect(app(EventRegistry::class)->getModels())
-    //            ->first(fn($m) => class_basename($m) === $modelName);
-    //
-    //        if ($modelClass) {
-    //
-    //            $record = $modelClass::find($id);
-    //
-    //            $map = $record->calendar_fillable ?? [];
-    //
-    //            $canMove = true;
-    //
-    //            if (isset($map['editable'])) {
-    //                $canMove = is_bool($map['editable'])
-    //                    ? $map['editable']
-    //                    : (bool)$record->getAttribute($map['editable']);
-    //            }
-    //
-    //            if (!$canMove) {
-    //                $this->dispatch('swal', message: 'This item is locked!', type: 'error');
-    //                return;
-    //            }
-    //
-    //            $dateField = $map['end_date_field'] ?? $map['end_date'] ?? 'created_at';
-    //
-    //            $record->{$dateField} = $newDate->format('Y-m-d');
-    //
-    //            $record->save();
-    //
-    //            $this->loadEvents();
-    //
-    //
-    //            // Updated dispatch name for consistency
-    //            $this->dispatch('dot-env-calendar:event-updated',
-    //                message: __($modelName) . __(' rescheduled to ') . $newDate->format('M d, Y'),
-    //                type: 'success'
-    //            );
-    //        }
-    //    }
 
     // Rename to handle both drops and resizes
     public function onEventChanged($eventId, $startDate, $endDate = null): void

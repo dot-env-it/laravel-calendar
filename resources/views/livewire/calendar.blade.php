@@ -18,6 +18,20 @@
                 businessHours: @js(config('dot-env-calendar.businessHours')),
                 weekends: !@js(config('dot-env-calendar.hideWeekends', false)),
 
+                moreLinkContent: function(args) {
+                    return @js(config('dot-env-calendar.moreLinkText')).replace(':num', args.num);
+                },
+
+                moreLinkClick: function(info) {
+                    @if(config('dot-env-calendar.moreLinkText') === 'popover')
+                        return 'popover';
+                    @else
+                        const date = new Date(info.dateStr);
+                        $wire.moreLinkClickEvent(date.getFullYear(), date.getMonth() + 1, date.getDate());
+                        return false;
+                    @endif
+                },
+
                 // Force both start and end times to display on the event blocks
                 displayEventTime: false,
 

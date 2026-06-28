@@ -21,6 +21,14 @@
         min-height: 30px;
     }
 
+    @if(config('dot-env-calendar.moreLinkText') !== 'popover')
+
+        .fc-popover {
+        display: none !important;
+        visibility: hidden !important;
+    }
+    @endif
+
     /* Hide the 'vibrating' loading text and use a clean overlay if needed */
     /*.fc-view-harness {*/
     /*    background-color: transparent;*/

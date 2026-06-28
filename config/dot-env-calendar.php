@@ -136,4 +136,14 @@ return [
     'selectable' => false,
 
     'changeStartDateOnDrop' => false, // when you don't want to change start date make it false
+
+    /*
+    |--------------------------------------------------------------------------
+    | Event list customization
+    |--------------------------------------------------------------------------
+    |
+    */
+    'moreLinkText' => ':num events',
+    'moreLinkClick' => 'popover', // available options: popover or event
+
 ];
