@@ -30,7 +30,7 @@ trait HasCalendarEvents
         if ($startDate instanceof Carbon && $startDate->format('H:i:s') === '00:00:00') {
             $time                        = config('dot-env-calendar.default_time', '10:30:00');
             [$hours, $minutes, $seconds] = explode(':', $time . ':00');
-            $startDate                   = $startDate->copy()->setTime((int)$hours, (int)$minutes, (int)$seconds);
+            $startDate                   = $startDate->copy()->setTime((int) $hours, (int) $minutes, (int) $seconds);
         }
 
         // 2. Handle End Date Logic
