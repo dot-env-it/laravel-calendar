@@ -26,8 +26,15 @@
                     @if(config('dot-env-calendar.moreLinkText') === 'popover')
                         return 'popover';
                     @else
-                        const date = new Date(info.dateStr);
-                        $wire.moreLinkClickEvent(date.getFullYear(), date.getMonth() + 1, date.getDate());
+                         const date = info.date;
+
+                        // Extract the correct Year, Month (1-12), and Day
+                        const year = date.getFullYear();
+                        const month = date.getMonth() + 1;
+                        const day = date.getDate();
+
+                        // Trigger your Livewire method
+                        $wire.moreLinkClickEvent(year, month, day);
                         return false;
                     @endif
                 },
