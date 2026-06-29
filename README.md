@@ -169,35 +169,7 @@ The component features an intelligent filtering system driven by your configurat
 
 ## ⚙️ Global Configuration
 
-Publish and refine the `config/laravel-calendar.php` file to align the calendar with your organization’s operational settings:
-
-```php
-return [
-    'enable_filter' => true, // Global default for the Select2 filter
-    'default_time' => '10:30:00', // if database has date field then to show this time instead of 00:00:00 
-
-    /*
-    |--------------------------------------------------------------------------
-    | Dynamic Event Styling
-    |--------------------------------------------------------------------------
-    | The package automatically colors events based on their date.
-    | You can use Bootstrap/Tailwind classes or HEX codes.
-    */
-    'colors' => [
-        'past' => ['class' => 'bg-danger text-white', 'color' => '#dc3545'],
-        'today' => ['class' => 'bg-warning text-dark', 'color' => '#ffc107'],
-        'tomorrow' => ['class' => 'bg-info text-white', 'color' => '#17a2b8'],
-        'future' => ['class' => 'bg-success text-white', 'color' => '#28a745'],
-    ],
-    
-    'businessHours' => [
-        'daysOfWeek' =>, // Standard Work Week
-        'startTime' => '08:30',
-        'endTime' => '17:30',
-    ],
-    'hideWeekends' => false,
-];
-```
+Publish and refine the `config/laravel-calendar.php` file to align the calendar with your organization’s operational settings.
 
 -----
 
